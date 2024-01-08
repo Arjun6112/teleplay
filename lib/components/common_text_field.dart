@@ -4,9 +4,11 @@ class CommonTextField extends StatelessWidget {
   CommonTextField(
       {super.key,
       required this.hintText,
+      this.isObscureText = false,
       this.keyboardType = TextInputType.text,
       required this.controller});
   final String hintText;
+  final bool isObscureText;
   TextInputType keyboardType = TextInputType.text;
   final TextEditingController controller;
 
@@ -15,6 +17,7 @@ class CommonTextField extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: TextField(
+        obscureText: isObscureText,
         controller: controller,
         keyboardType: keyboardType,
         decoration: InputDecoration(

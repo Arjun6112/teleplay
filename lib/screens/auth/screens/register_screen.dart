@@ -1,6 +1,12 @@
+import 'dart:convert';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:teleplay/components/common_button.dart';
 import 'package:teleplay/components/common_text_field.dart';
+import 'package:teleplay/screens/auth/controller/auth_controller.dart';
+import 'package:teleplay/screens/home/home_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -10,104 +16,125 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  TextEditingController _phoneController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+  TextEditingController nameController = TextEditingController();
+
+  saveUserInfo(String jwt) {
+    SharedPreferences.getInstance().then((prefs) {
+      prefs.setString("email", emailController.text);
+      prefs.setString("password", passwordController.text);
+      prefs.setString("name", nameController.text);
+      prefs.setString("jwt", jwt);
+    });
+  }
+
+  checkCredentials() async {
+    if (emailController.text.isEmpty ||
+        passwordController.text.isEmpty ||
+        nameController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Please fill all the fields"),
+        ),
+      );
+      return;
+    }
+    if (emailController.text.length < 6 ||
+        !emailController.text.contains("@")) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Enter valid email"),
+        ),
+      );
+      return;
+    }
+    if (passwordController.text.length < 6) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Password must be at least 6 characters"),
+        ),
+      );
+      return;
+    } else {
+      showCupertinoModalPopup(
+          barrierDismissible: false,
+          context: context,
+          builder: (context) => Center(
+                  child: CupertinoActivityIndicator(
+                color: Colors.blue[800],
+              )));
+      register();
+      Navigator.of(context).pop();
+    }
+  }
+
+  void register() async {
+    var response = await AuthController().register(
+        emailController.text, passwordController.text, nameController.text);
+
+    print(response);
+    if (response == "Email Already Exists") {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Something went wrong"),
+        ),
+      );
+    } else {
+      saveUserInfo(jsonDecode(response)['token']);
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => const HomePage()),
+          (route) => false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.blue.shade300,
-        body: Center(
+      backgroundColor: Colors.blue[200],
+      body: Stack(children: [
+        Center(
           child: SingleChildScrollView(
             scrollDirection: Axis.vertical,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const SizedBox(height: 120),
-                const Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.video_collection, size: 50, color: Colors.white),
-                    SizedBox(width: 10),
-                    Text(
-                      "Register",
-                      style: TextStyle(
-                          fontSize: 40,
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 80),
-                CommonTextField(
-                  controller: _phoneController,
-                  keyboardType: TextInputType.number,
-                  hintText: "User ID",
-                ),
-                CommonTextField(
-                  controller: _phoneController,
-                  keyboardType: TextInputType.number,
-                  hintText: "Password",
+                Image.asset(
+                  'assets/teleplay_logo.png',
+                  height: 200,
                 ),
                 const SizedBox(
-                  height: 40,
+                  height: 20,
+                ),
+                const Text("Register as a new user",
+                    style: TextStyle(
+                        color: Colors.blue,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold)),
+                const SizedBox(
+                  height: 30,
+                ),
+                CommonTextField(hintText: "Name", controller: nameController),
+                CommonTextField(hintText: "Email", controller: emailController),
+                CommonTextField(
+                  hintText: "Password",
+                  controller: passwordController,
+                  isObscureText: true,
+                ),
+                const SizedBox(
+                  height: 30,
                 ),
                 CommonButton(
-                  title: "Login",
-                  onPressed: () {},
-                ),
-                const SizedBox(height: 30),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        "Forgot Password?",
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                            decoration: TextDecoration.underline,
-                            decorationColor: Colors.blue.shade900),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(
-                  height: 15,
-                ),
-                Divider(
-                  thickness: 2.0,
-                  color: Colors.blue[700],
-                ),
-                const SizedBox(
-                  height: 15,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      "Not a member ?",
-                      style:
-                          TextStyle(color: Colors.blue.shade700, fontSize: 18),
-                    ),
-                    const SizedBox(width: 5),
-                    GestureDetector(
-                      onTap: () {},
-                      child: Text(
-                        "Join Now",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
-                          color: Colors.blue.shade700,
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-                const SizedBox(height: 30),
+                  title: "Register",
+                  onPressed: () {
+                    checkCredentials();
+                  },
+                )
               ],
             ),
           ),
-        ));
+        ),
+      ]),
+    );
   }
 }

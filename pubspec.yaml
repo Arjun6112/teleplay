@@ -28,15 +28,23 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
-  appinio_video_player: ^1.2.2
   cupertino_icons: ^1.0.2
-  dio: ^5.4.0
   file_picker: ^6.1.1
+  firebase_auth: ^4.15.3
+  fl_chart: ^0.60.0
   flutter:
     sdk: flutter
+  flutter_downloader: ^1.11.6
   flutter_vlc_player: ^7.4.1
+  fluttertoast: ^8.2.4
+  google_mobile_ads: ^4.0.0
   google_nav_bar: ^5.0.6
+  google_sign_in: ^6.1.6
   http: ^1.1.0
+  lottie: ^2.7.0
+  path_provider: ^2.1.1
+  permission_handler: ^10.4.4
+  popover: ^0.2.7
   shared_preferences: ^2.2.2
   speech_to_text: ^6.5.0
   video_player: ^2.8.1

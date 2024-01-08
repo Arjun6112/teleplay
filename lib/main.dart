@@ -1,9 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:teleplay/screens/home/home_screen.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:teleplay/screens/splash_screen.dart';
-import 'package:teleplay/screens/video_player.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await FlutterDownloader.initialize(
+      debug:
+          true, // optional: set to false to disable printing logs to console (default: true)
+      ignoreSsl:
+          true // option: set to false to disable working with http links (default: false)
+      );
+  await MobileAds.instance.initialize();
   runApp(const MyApp());
 }
 
@@ -20,7 +28,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
         useMaterial3: true,
       ),
-      home: HomePage(),
+      home: const SplashScreen(),
     );
   }
 }

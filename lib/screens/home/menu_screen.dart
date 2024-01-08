@@ -1,4 +1,10 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:teleplay/screens/auth/screens/login_screen.dart';
+import 'package:teleplay/screens/channel/my_channel_home.dart';
+import 'package:teleplay/screens/home/download_page.dart';
+import 'package:teleplay/screens/home/history_page.dart';
 
 class MenuScreen extends StatefulWidget {
   const MenuScreen({super.key});
@@ -8,6 +14,73 @@ class MenuScreen extends StatefulWidget {
 }
 
 class _MenuScreenState extends State<MenuScreen> {
+  String? name;
+  String? email;
+  void getPref() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      name = prefs.getString('name');
+      email = prefs.getString('email');
+    });
+
+    if (name == null || email == null) {
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(
+            builder: (context) => const LoginScreen(),
+          ),
+          (Route<dynamic> route) => false);
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  void showAccountDetails() {
+    getPref();
+
+    showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+              backgroundColor: Colors.blue[400],
+              title: const Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.person,
+                    color: Colors.white,
+                    size: 30,
+                  ),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  Text(
+                    "Account details",
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text("Name: $name",
+                      style:
+                          const TextStyle(color: Colors.white, fontSize: 18)),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Text("Email: $email",
+                      style:
+                          const TextStyle(color: Colors.white, fontSize: 18)),
+                ],
+              ),
+            ));
+  }
+
   void sendFeedback() {
     showDialog(
       context: context,
@@ -26,7 +99,7 @@ class _MenuScreenState extends State<MenuScreen> {
             ),
             Text(
               "Help and Feedback",
-              style: TextStyle(color: Colors.white, fontSize: 20),
+              style: TextStyle(color: Colors.white, fontSize: 18),
             ),
           ],
         ),
@@ -118,46 +191,55 @@ class _MenuScreenState extends State<MenuScreen> {
                   color: Colors.black,
                   thickness: 2,
                 ),
-                const ListTile(
-                  shape: RoundedRectangleBorder(
+                ListTile(
+                  onTap: showAccountDetails,
+                  shape: const RoundedRectangleBorder(
                     borderRadius: BorderRadius.all(
                       Radius.circular(10),
                     ),
                   ),
-                  leading: Icon(
+                  leading: const Icon(
                     Icons.person,
                   ),
-                  title: Text("Account",
+                  title: const Text("Account",
                       style: TextStyle(
                           fontSize: 20,
                           color: Colors.black,
                           fontWeight: FontWeight.w400)),
                 ),
-                const ListTile(
-                  shape: RoundedRectangleBorder(
+                ListTile(
+                  onTap: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (ctx) => const HistoryPage()));
+                  },
+                  shape: const RoundedRectangleBorder(
                     borderRadius: BorderRadius.all(
                       Radius.circular(10),
                     ),
                   ),
-                  leading: Icon(
+                  leading: const Icon(
                     Icons.history_outlined,
                   ),
-                  title: Text("History",
+                  title: const Text("History",
                       style: TextStyle(
                           fontSize: 20,
                           color: Colors.black,
                           fontWeight: FontWeight.w400)),
                 ),
-                const ListTile(
-                  shape: RoundedRectangleBorder(
+                ListTile(
+                  onTap: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (ctx) => const DownloadPage()));
+                  },
+                  shape: const RoundedRectangleBorder(
                     borderRadius: BorderRadius.all(
                       Radius.circular(10),
                     ),
                   ),
-                  leading: Icon(
+                  leading: const Icon(
                     Icons.download,
                   ),
-                  title: Text("Download",
+                  title: const Text("Download",
                       style: TextStyle(
                           fontSize: 20,
                           color: Colors.black,
@@ -167,16 +249,20 @@ class _MenuScreenState extends State<MenuScreen> {
                   color: Colors.black,
                   thickness: 2,
                 ),
-                const ListTile(
-                  shape: RoundedRectangleBorder(
+                ListTile(
+                  onTap: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (ctx) => const MyChannelHome()));
+                  },
+                  shape: const RoundedRectangleBorder(
                     borderRadius: BorderRadius.all(
                       Radius.circular(10),
                     ),
                   ),
-                  leading: Icon(
+                  leading: const Icon(
                     Icons.playlist_add_check_outlined,
                   ),
-                  title: Text("My Channel",
+                  title: const Text("My Channel",
                       style: TextStyle(
                           fontSize: 20,
                           color: Colors.black,
