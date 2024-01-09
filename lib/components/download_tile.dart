@@ -82,6 +82,7 @@ class _DownloadTileState extends State<DownloadTile> {
                           children: [
                             IconButton(
                                 onPressed: () {
+                                  widget.onTap!();
                                   if (widget.task.status ==
                                       DownloadTaskStatus.paused) {
                                     FlutterDownloader.resume(
@@ -104,6 +105,7 @@ class _DownloadTileState extends State<DownloadTile> {
                                 )),
                             IconButton(
                                 onPressed: () {
+                                  widget.onTap!();
                                   FlutterDownloader.remove(
                                       taskId: widget.task.taskId);
                                 },

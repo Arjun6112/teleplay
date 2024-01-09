@@ -72,7 +72,13 @@ class _DownloadPageState extends State<DownloadPage> {
           child: ListView.builder(
             itemCount: allTasks.length,
             itemBuilder: (context, index) {
-              return DownloadTile(task: allTasks[index]);
+              return DownloadTile(
+                  onTap: () {
+                    print("tapped");
+                    loadAllDownLoads();
+                    setState(() {});
+                  },
+                  task: allTasks[index]);
             },
           ),
         ),

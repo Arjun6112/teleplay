@@ -292,14 +292,15 @@ class _SearchPageState extends State<SearchPage> {
                                               MaterialPageRoute(
                                                   builder: (context) =>
                                                       VideoPlayerPage(
+                                                          movieList:
+                                                              mediaResults,
                                                           magnetLink:
                                                               searchMovieDataModel
                                                                   .magnet,
                                                           movieModel: MovieModel(
-                                                              name:
-                                                                  mediaResults![
-                                                                          index]
-                                                                      .name,
+                                                              name: mediaResults![
+                                                                      index]
+                                                                  .name,
                                                               path:
                                                                   mediaResults![
                                                                           index]

@@ -107,14 +107,15 @@ class _HistoryPageState extends State<HistoryPage> {
                                               MaterialPageRoute(
                                                   builder: (context) =>
                                                       VideoPlayerPage(
+                                                          movieList:
+                                                              mediaResults,
                                                           magnetLink:
                                                               searchMovieDataModel
                                                                   .magnet,
                                                           movieModel: MovieModel(
-                                                              name:
-                                                                  mediaResults![
-                                                                          index]
-                                                                      .name,
+                                                              name: mediaResults![
+                                                                      index]
+                                                                  .name,
                                                               path:
                                                                   mediaResults![
                                                                           index]

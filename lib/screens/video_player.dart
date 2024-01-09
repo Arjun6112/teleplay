@@ -8,13 +8,15 @@ import 'package:teleplay/screens/home/models/movie_model.dart';
 
 /// Stateful widget to fetch and then display video content.
 class VideoPlayerPage extends StatefulWidget {
-  const VideoPlayerPage({
-    Key? key,
-    required this.movieModel,
-    required this.magnetLink,
-  }) : super(key: key);
+  VideoPlayerPage(
+      {Key? key,
+      required this.movieModel,
+      required this.magnetLink,
+      this.movieList = const []})
+      : super(key: key);
   final MovieModel movieModel;
   final String magnetLink;
+  List<MovieModel>? movieList = [];
 
   @override
   _VideoPlayerPageState createState() => _VideoPlayerPageState();
@@ -331,7 +333,6 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
   Widget build(BuildContext context) {
     return SafeArea(
         child: Scaffold(
-      backgroundColor: Colors.grey[300],
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,
         child: Column(
@@ -453,18 +454,20 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
               ],
             ),
             const SizedBox(
-              height: 30,
+              height: 10,
             ),
             ListTile(
               leading: const Icon(
                 Icons.movie,
                 size: 24,
+                color: Colors.blue,
               ),
               title: Text(
                 widget.movieModel.name,
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
+                  color: Colors.blue,
                 ),
               ),
               subtitle: Text(
@@ -472,8 +475,61 @@ class _VideoPlayerPageState extends State<VideoPlayerPage> {
                 style: const TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.bold,
+                  color: Colors.blue,
                 ),
               ),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Container(
+              color: Colors.blue.shade200,
+              height: 500,
+              child: ListView.builder(
+                  itemCount: widget.movieList?.length ?? 0,
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                      onTap: () {
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => VideoPlayerPage(
+                                      movieModel: MovieModel(
+                                          name: widget.movieList![index].name,
+                                          path: widget.movieList![index].path,
+                                          size: widget.movieList![index].size),
+                                      magnetLink: widget.magnetLink,
+                                      movieList: widget.movieList,
+                                    )));
+                      },
+                      leading: widget.movieList![index].name.contains("mp4") ||
+                              widget.movieList![index].name.contains("mkv")
+                          ? const Icon(
+                              Icons.movie,
+                              color: Colors.white,
+                              size: 36,
+                            )
+                          : const Icon(
+                              Icons.file_open_rounded,
+                              color: Colors.white,
+                              size: 30,
+                            ),
+                      title: Text(
+                        maxLines: 1,
+                        widget.movieList![index].name,
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold, color: Colors.white),
+                      ),
+                      subtitle: Text(
+                        widget.movieList![index].size,
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold, color: Colors.white),
+                      ),
+                    );
+                  }),
+            ),
+            const SizedBox(
+              height: 10,
             ),
           ],
         ),
